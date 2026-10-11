@@ -1,5 +1,5 @@
-﻿'use client';
-// 도토리 등록/수정 공용 폼 (4.15) — 16:9 이미지 + 시나리오 정보 + 상태
+'use client';
+// 도토리 등록/수정 공용 폼 (4.15) — 16:9 이미지 + 작품 정보 + 상태
 import React, { useState } from 'react';
 import { DotoriItem, DotoriStatus, DOTORI_STATUS_KEYS, useTrpgSettings } from '@/lib/galleryStore';
 import { KInput, KSelect } from '@/components/ui/Kit';
@@ -8,7 +8,7 @@ import { putBlob } from '@/lib/blobStore';
 import { useToast } from '@/components/ui/Toast';
 
 export interface DotoriFormValue {
-  name: string; writer: string; rule: string; people: string;
+  name: string; category: string; genre: string; // 💡 카테고리와 장르 구조로 변경
   tags: string[]; link?: string; status: DotoriStatus;
   imgId?: string; thumbCrop?: CropValue;
 }
@@ -19,15 +19,13 @@ export function DotoriForm({ initial, onSave, onCancel }: {
   onCancel: () => void;
 }) {
   const toast = useToast();
-  const [trpgSet] = useTrpgSettings(); // 상태 라벨 (환경설정 > TRPG)
+  const [trpgSet] = useTrpgSettings(); // 상태 라벨
   const isNew = !initial;
   const [name, setName] = useState(initial?.name ?? '');
-  const [writer, setWriter] = useState(initial?.writer ?? '');
-  const [rule, setRule] = useState(initial?.rule ?? '');
-  const [people, setPeople] = useState(initial?.people ?? '');
+  const [category, setCategory] = useState(initial?.writer ?? ''); // 💡 기존 writer -> category 매핑
+  const [genre, setGenre] = useState(initial?.rule ?? ''); // 💡 기존 rule -> genre 매핑 (인원과 칸 통합)
   const [tags, setTags] = useState((initial?.tags ?? []).join(', '));
   const [link, setLink] = useState(initial?.link ?? '');
-  // 새로 담는 시나리오는 대개 아직 일정이 없다 — 기본값을 「일정 미정」으로 (사용자 확정)
   const [status, setStatus] = useState<DotoriStatus>(initial?.status ?? 'undecided');
   const [file, setFile] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState('');
@@ -36,9 +34,11 @@ export function DotoriForm({ initial, onSave, onCancel }: {
   const [cropOpen, setCropOpen] = useState(false);
 
   const save = async () => {
-    if (!name.trim()) { toast('시나리오 이름을 입력해 주세요'); return; }
+    if (!name.trim()) { toast('작품 이름을 입력해 주세요'); return; } // 💡 안내 문구 수정
     onSave({
-      name: name.trim(), writer: writer.trim(), rule: rule.trim(), people: people.trim(),
+      name: name.trim(), 
+      category: category.trim(), // 💡 category 저장
+      genre: genre.trim(), // 💡 genre 저장
       tags: tags.split(',').map(t => t.trim()).filter(Boolean),
       link: link.trim() || undefined, status,
       imgId: file ? await putBlob(file) : (removed ? undefined : initial?.imgId),
@@ -83,11 +83,13 @@ export function DotoriForm({ initial, onSave, onCancel }: {
         <div className="panel widget" style={{ marginBottom: 14 }}>
           <h4>시나리오</h4>
           <div style={{ display: 'grid', gap: 9 }}>
-            <KInput placeholder="시나리오 이름" value={name} onChange={e => setName(e.target.value)} />
+            {/* 💡 시나리오 이름 -> 작품 이름 */}
+            <KInput placeholder="작품 이름" value={name} onChange={e => setName(e.target.value)} />
             <div style={{ display: 'flex', gap: 8 }}>
-              <KInput placeholder="라이터" value={writer} onChange={e => setWriter(e.target.value)} />
-              <KInput placeholder="룰" value={rule} onChange={e => setRule(e.target.value)} style={{ maxWidth: 130 }} />
-              <KInput placeholder="인원" value={people} onChange={e => setPeople(e.target.value)} style={{ maxWidth: 90 }} />
+              {/* 💡 라이터 -> 카테고리 */}
+              <KInput placeholder="카테고리" value={category} onChange={e => setCategory(e.target.value)} />
+              {/* 💡 룰, 인원 칸을 하나로 합치고 -> 장르 */}
+              <KInput placeholder="장르" value={genre} onChange={e => setGenre(e.target.value)} />
             </div>
             <KInput placeholder="태그 — 쉼표로 구분" value={tags} onChange={e => setTags(e.target.value)} />
             <KInput placeholder="링크 (선택)" value={link} onChange={e => setLink(e.target.value)} />
