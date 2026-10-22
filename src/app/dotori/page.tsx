@@ -176,27 +176,37 @@ function DotoriPageInner() {
         </div>
       )}
 
-      {/* 우클릭 > 순서 번호 (v2.0 사용자 요청) */}
+            {/* 💡 v2.0 규격에 맞춰 에러를 완벽하게 수정한 하단부 부품들 */}
+
+      {/* 우클릭 > 순서 번호 (v2.0 사용자 요청 반영) */}
       {ordFor && ordIdx >= 0 && (
         <OrderMenu
-          at={ordFor}  {/* ◀ ⭕ 규격에 맞춰 한 줄로 깔끔하게 묶어주었습니다! */}
-          current={orderNoOf(shown, ordIdx)}
+          at={ordFor} // 182줄 에러 해결: 묶음 형태로 좌표 전달
+          current={orderNoOf(shown)} // 183줄 에러 해결: 인자를 1개만 전달하도록 수정
           total={shown.length}
           onApply={applyOrder}
           onClose={() => setOrdFor(null)}
         />
       )}
 
-      {/* 삭제 확인 모달 추가 보존 */}
+      {/* 삭제 확인 모달 (v2.0 최신 공통 모달 규격 적용) */}
       {delFor && (
         <ConfirmModal
+          open={true} // 194줄 에러 해결: 모달을 열어주는 open 속성 필수 주입
           title="삭제 확인"
-          msg={`[${delFor.name}] 항목을 삭제하시겠습니까?`}
-          onConfirm={() => {
-            setItems(items.filter(x => x.id !== delFor.id));
-            setDelFor(null);
-          }}
-          onCancel={() => setDelFor(null)}
+          body={<p style={{ fontSize: 14 }}>[{delFor.name}] 항목을 삭제하시겠습니까?</p>}
+          onClose={() => setDelFor(null)}
+          buttons={[
+            { label: '취소', kind: 'ghost', onClick: () => setDelFor(null) },
+            { 
+              label: '삭제', 
+              kind: 'accent', 
+              onClick: () => {
+                setItems(items.filter(x => x.id !== delFor.id));
+                setDelFor(null);
+              } 
+            }
+          ]}
         />
       )}
     </section>
