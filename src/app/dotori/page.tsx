@@ -79,7 +79,6 @@ function DotoriPageInner() {
     <section className="page" onClick={() => setStatusFor(null)}>
       <div className="page-head">
         <PageTitle>{sec.id === 'main' ? 'DOTORI' : sec.name}</PageTitle>
-        {/* 💡 [변경] 소개 가이드라인 문구를 정돈된 뉘앙스로 호환 패치 */}
         <EditableDesc k="dotori-desc" def="수집한 카드 저장함 — 차곡차곡 모아두기" />
       </div>
 
@@ -93,7 +92,6 @@ function DotoriPageInner() {
           ))}
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          {/* 💡 [변경] 검색창 힌트 문구를 '시나리오·라이터'에서 변경된 명칭인 '이름·장르'로 자연스럽게 전치 */}
           <SearchBar placeholder="이름·장르·태그 검색" onSearch={setQ} />
           {isAdmin && <button className="btn btn-dark" onClick={() => router.push('/dotori/new' + secQuery('dotori', sec.id))}>＋ ADD</button>}
         </div>
@@ -145,8 +143,7 @@ function DotoriPageInner() {
                 {it.name}
               </b>
               
-              {/* 💡 [변경] 기존 [it.writer, it.rule, it.people] 구조에서 rule, people을 지우고 
-                  it.writer 한 가지만 단독 노출하도록 변경하여 장르 텍스트 한 줄만 깔끔하게 나오도록 매핑했습니다. */}
+              {/* 💡 v2.0 매핑: 기존 룰/인원 출력 제거 및 장르(it.writer)만 단독 노출 */}
               <small className="meta">
                 {it.writer || ''}
               </small>
@@ -176,23 +173,21 @@ function DotoriPageInner() {
         </div>
       )}
 
-            {/* 💡 v2.0 규격에 맞춰 에러를 완벽하게 수정한 하단부 부품들 */}
-
-      {/* 우클릭 > 순서 번호 (v2.0 사용자 요청 반영) */}
+      {/* 우클릭 > 순서 번호 (v2.0 최신 규격 반영) */}
       {ordFor && ordIdx >= 0 && (
         <OrderMenu
-          at={ordFor} // 182줄 에러 해결: 묶음 형태로 좌표 전달
-          current={orderNoOf(shown)} // 183줄 에러 해결: 인자를 1개만 전달하도록 수정
+          at={ordFor}
+          current={orderNoOf(shown)}
           total={shown.length}
           onApply={applyOrder}
           onClose={() => setOrdFor(null)}
         />
       )}
 
-      {/* 삭제 확인 모달 (v2.0 최신 공통 모달 규격 적용) */}
+      {/* 삭제 확인 모달 (v2.0 최신 공통 모달 규격 반영) */}
       {delFor && (
         <ConfirmModal
-          open={true} // 194줄 에러 해결: 모달을 열어주는 open 속성 필수 주입
+          open={true}
           title="삭제 확인"
           body={<p style={{ fontSize: 14 }}>[{delFor.name}] 항목을 삭제하시겠습니까?</p>}
           onClose={() => setDelFor(null)}
