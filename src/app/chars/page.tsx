@@ -31,7 +31,7 @@ function CharsInner() {
 
   // 💡 [추가] 현재 페이지 번호를 저장하는 상태 변수 (기본값: 1페이지)
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 8; // 한 페이지에 보여줄 캐릭터 수
+  const itemsPerPage = 10; // 한 페이지에 보여줄 캐릭터 수
 
   /* 편집 권한 문서 자가 치유 (v2.0 포크 제보 — 「권한을 줬는데 그 회원의 저장이 거부된다」). */
   useEffect(() => {
