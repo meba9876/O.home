@@ -179,7 +179,7 @@ function DotoriPageInner() {
       {/* 우클릭 > 순서 번호 (v2.0 사용자 요청) */}
       {ordFor && ordIdx >= 0 && (
         <OrderMenu
-          x={ordFor.x} y={ordFor.y}
+          at={ordFor}  {/* ◀ ⭕ 규격에 맞춰 한 줄로 깔끔하게 묶어주었습니다! */}
           current={orderNoOf(shown, ordIdx)}
           total={shown.length}
           onApply={applyOrder}
