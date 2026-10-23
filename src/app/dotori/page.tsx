@@ -177,7 +177,7 @@ function DotoriPageInner() {
       {ordFor && ordIdx >= 0 && (
         <OrderMenu
           at={ordFor}
-          current={orderNoOf(shown, ordIdx)} {/* ◀ ⭕ 뒤에 ', ordIdx'를 붙여 규칙을 맞춰주었습니다! */}
+          current={orderNoOf(shown, ordIdx)}
           total={shown.length}
           onApply={applyOrder}
           onClose={() => setOrdFor(null)}
